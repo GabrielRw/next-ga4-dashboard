@@ -1,0 +1,24 @@
+{
+  "name": "next-ga4-dashboard",
+  "version": "0.1.0",
+  "description": "Self-hosted GA4 dashboard generator CLI for Next.js apps.",
+  "type": "module",
+  "bin": {
+    "next-ga4-dashboard": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@next-ga4-dashboard/core": "0.1.0",
+    "commander": "^14.0.0",
+    "zod": "^3.25.56"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "typescript": "^5.8.3"
+  }
+}

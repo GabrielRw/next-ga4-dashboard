@@ -1,0 +1,27 @@
+{
+  "name": "@next-ga4-dashboard/core",
+  "version": "0.1.0",
+  "description": "Local scanner, schemas, and generator helpers for Next GA4 Dashboard.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod-to-json-schema": "^3.24.6",
+    "zod": "^3.25.56"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.2"
+  }
+}

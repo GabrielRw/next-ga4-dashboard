@@ -1,0 +1,27 @@
+{
+  "name": "@next-ga4-dashboard/react",
+  "version": "0.1.0",
+  "description": "React dashboard components for Next GA4 Dashboard.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "recharts": ">=2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.6",
+    "react": "^19.1.0",
+    "recharts": "^2.15.3",
+    "typescript": "^5.8.3"
+  }
+}
