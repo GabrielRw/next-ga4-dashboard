@@ -98,7 +98,7 @@ function printAgentPrepared(): void {
 Next step:
 Ask your coding agent:
 
-Read .ga-dashboard/agent-instructions.md and complete the Next GA4 Dashboard audit.
+Read .ga-dashboard/agent-instructions.md and .ga-dashboard/ready-prompts.md, then complete the Next GA4 Dashboard audit.
 
 When it is done, run:
 npx next-ga4-dashboard apply-agent-output
@@ -107,6 +107,7 @@ npx next-ga4-dashboard init --from-audit`);
 
 function printAuditSummary(outputPath: string, context: Awaited<ReturnType<typeof scanProject>>): void {
   console.log(`Audit complete: ${outputPath}
+Ready prompts: ${outputPath.replace(/ga-dashboard\.audit\.json$/, "ga-dashboard.prompts.md")}
 
 Existing analytics setup:
 - Libraries: ${context.analytics.libraries.join(", ") || "None detected"}

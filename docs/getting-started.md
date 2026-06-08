@@ -20,6 +20,12 @@ This scans common local folders:
 
 It writes `ga-dashboard.audit.json`.
 
+It also writes `ga-dashboard.prompts.md`, which contains copy-paste prompts for:
+
+- reconciling desired dashboard events with existing GA4 events
+- adding missing events in code
+- finalizing funnel definitions for the generated dashboard
+
 ## 2. Agent-assisted audit
 
 ```bash
@@ -33,6 +39,8 @@ Ask your agent:
 ```text
 Read .ga-dashboard/agent-instructions.md and complete the Next GA4 Dashboard audit.
 ```
+
+For better event quality, also paste the relevant section from `.ga-dashboard/ready-prompts.md`. It tells the agent how to use existing GA4 events when they already match the funnel step and how to avoid duplicate or inflated conversion events.
 
 Your agent should inspect the suggested files and write the final `ga-dashboard.audit.json`.
 

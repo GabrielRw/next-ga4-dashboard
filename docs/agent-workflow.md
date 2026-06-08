@@ -13,8 +13,16 @@ The CLI creates:
 - `.ga-dashboard/ui-actions.json`
 - `.ga-dashboard/funnels.draft.json`
 - `.ga-dashboard/schema.json`
+- `.ga-dashboard/ready-prompts.md`
 
 The user's own coding agent reads this workspace and writes `ga-dashboard.audit.json`.
+
+`ready-prompts.md` gives the user copy-paste prompts for:
+
+- checking whether GA4 already has the right events
+- deciding which missing events to add
+- implementing those events with the existing analytics helper
+- finalizing dashboard funnels against real event names
 
 The free version does not call hosted AI APIs, upload source code, provide hosted OAuth, or store analytics data outside the user's project.
 

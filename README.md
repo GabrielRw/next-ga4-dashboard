@@ -6,6 +6,8 @@ It scans your app locally, helps your own coding agent understand your tracking,
 
 The current generator is based on a production FreeAstroAPI implementation: OAuth-first GA4 access, a dark DataFast-style dashboard, Recharts, quota-safe GA4 report calls, and optional extension points for Stripe revenue, Supabase custom funnels/cache, and Google Search Console keywords.
 
+Each audit also writes ready-to-use prompts that help a user or coding agent reconcile existing GA4 events, add missing conversion events, and finalize funnels without inventing duplicate event names.
+
 ## Principles
 
 - Fully self-hosted free version.
