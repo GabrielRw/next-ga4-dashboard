@@ -71,9 +71,15 @@ program
     const written = await generateNextDashboard(projectRoot, audit, options.route);
     console.log("Generated self-hosted GA4 dashboard:");
     for (const file of written) console.log(`- ${path.relative(projectRoot, file)}`);
-    console.log("\nConfigure these environment variables in your own project:");
+    console.log("\nConfigure these server-side environment variables in your own project:");
     console.log("- GA4_PROPERTY_ID");
-    console.log("- GOOGLE_APPLICATION_CREDENTIALS or GA4_CLIENT_EMAIL + GA4_PRIVATE_KEY");
+    console.log("- GA4_CLIENT_ID");
+    console.log("- GA4_CLIENT_SECRET");
+    console.log("- GA4_REFRESH_TOKEN");
+    console.log("\nThen run this helper from the generated project if you need a refresh token:");
+    console.log("node scripts/create-google-analytics-refresh-token.mjs");
+    console.log("\nInstall required dashboard dependencies if they are not already present:");
+    console.log("npm install @google-analytics/data google-auth-library recharts lucide-react");
   });
 
 program.parseAsync(process.argv).catch((error: unknown) => {
@@ -106,6 +112,10 @@ Existing analytics setup:
 - Libraries: ${context.analytics.libraries.join(", ") || "None detected"}
 - GA4 IDs: ${context.analytics.gaMeasurementIds.join(", ") || "None detected"}
 - GTM IDs: ${context.analytics.gtmContainerIds.join(", ") || "None detected"}
+- Stripe: ${context.integrationCapabilities?.hasStripe ? "detected" : "not detected"}
+- Supabase: ${context.integrationCapabilities?.hasSupabase ? "detected" : "not detected"}
+- DataFast: ${context.integrationCapabilities?.hasDataFast ? "detected" : "not detected"}
+- First-party attribution: ${context.integrationCapabilities?.hasFirstPartyAttribution ? "detected" : "not detected"}
 
 Detected events: ${context.detectedEvents.length}
 Missing recommended events: ${context.missingRecommendedEvents.length}

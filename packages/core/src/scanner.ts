@@ -6,6 +6,7 @@ import {
   DashboardWidget,
   DetectedEvent,
   Funnel,
+  IntegrationCapabilities,
   RouteInfo,
   UIAction,
   auditContextSchema,
@@ -25,6 +26,8 @@ const ANALYTICS_PATTERNS = [
   "analytics.track(",
   "sendGAEvent(",
   "GoogleAnalytics",
+  "trackDataFastGoal(",
+  "data-fast-goal",
   "NEXT_PUBLIC_GA",
   "NEXT_PUBLIC_GTM",
   "event_name",
@@ -57,6 +60,7 @@ export async function scanProject(projectRoot: string): Promise<AuditContext> {
 
   const routes = detectRoutes(root, fileContents.map((file) => file.absolute));
   const analytics = detectAnalytics(fileContents, dependencies);
+  const integrationCapabilities = detectIntegrationCapabilities(fileContents, dependencies, routes);
   const detectedEvents = detectEvents(fileContents);
   const uiActions = detectUiActions(fileContents, detectedEvents);
   const suggestedFunnels = suggestFunnels(routes, uiActions, detectedEvents);
@@ -87,6 +91,7 @@ export async function scanProject(projectRoot: string): Promise<AuditContext> {
     missingRecommendedEvents: uiActions.filter((action) => !detectedEvents.some((event) => event.name === action.suggestedEventName)),
     suggestedFunnels,
     dashboardWidgets,
+    integrationCapabilities,
     appTypeInference: inferAppType(routes, uiActions, dependencies),
   };
 
@@ -106,6 +111,7 @@ export function compactAudit(context: AuditContext): Audit {
     missingRecommendedEvents: context.missingRecommendedEvents,
     suggestedFunnels: context.suggestedFunnels,
     dashboardWidgets: context.dashboardWidgets,
+    integrationCapabilities: context.integrationCapabilities,
   });
 }
 
@@ -146,13 +152,35 @@ function routePathFromPages(relative: string): string {
 function detectAnalytics(files: Array<{ relative: string; text: string }>, dependencies: Record<string, string>) {
   const joined = files.map((file) => file.text).join("\n");
   const libraries = Object.keys(dependencies).filter((name) =>
-    /@next\/third-parties|@google-analytics|gtag|react-ga|analytics|segment|posthog|mixpanel/i.test(name),
+    /@next\/third-parties|@google-analytics|gtag|react-ga|analytics|segment|posthog|mixpanel|datafast/i.test(name),
   );
+  if (/datafast|trackDataFastGoal|data-fast-goal/i.test(joined) && !libraries.includes("datafast")) {
+    libraries.push("datafast");
+  }
   return {
     libraries,
     gaMeasurementIds: uniqueMatches(joined, /G-[A-Z0-9]{6,}/g),
     gtmContainerIds: uniqueMatches(joined, /GTM-[A-Z0-9]{4,}/g),
     hasPageViewTracking: /page_view|config['"],\s*['"]G-|sendGAEvent\(\s*['"]page_view/i.test(joined),
+  };
+}
+
+function detectIntegrationCapabilities(
+  files: Array<{ relative: string; text: string }>,
+  dependencies: Record<string, string>,
+  routes: RouteInfo[],
+): IntegrationCapabilities {
+  const joined = files.map((file) => `${file.relative}\n${file.text}`).join("\n");
+  const dependencyNames = Object.keys(dependencies).join("\n");
+  const routePaths = routes.map((route) => route.path).join("\n");
+
+  return {
+    hasDataFast: /datafast|trackDataFastGoal|data-fast-goal/i.test(`${joined}\n${dependencyNames}`),
+    hasStripe: /stripe|checkout\.session\.completed|STRIPE_SECRET_KEY|createCheckoutSession/i.test(`${joined}\n${dependencyNames}`),
+    hasSupabase: /supabase|@supabase\/supabase-js/i.test(`${joined}\n${dependencyNames}`),
+    hasAdminArea: /(^|\/)admin(\/|$)|admin\/dashboard|verify_admin|admin_token/i.test(`${joined}\n${routePaths}`),
+    hasBackendApiRoutes: /app\/api\/|pages\/api\/|api\/v1|fastapi|express|route\.ts/i.test(joined),
+    hasFirstPartyAttribution: /visitor_id|session_id|landing_page|utm_source|marketing_(signup|payment)_attributions|firstPartyAttribution/i.test(joined),
   };
 }
 
@@ -164,6 +192,8 @@ function detectEvents(files: Array<{ relative: string; text: string }>): Detecte
       const eventNames = [
         ...uniqueMatches(line, /gtag\(\s*['"]event['"]\s*,\s*['"]([^'"]+)['"]/g, 1),
         ...uniqueMatches(line, /sendGAEvent\(\s*['"]([^'"]+)['"]/g, 1),
+        ...uniqueMatches(line, /trackDataFastGoal\(\s*['"]([^'"]+)['"]/g, 1),
+        ...uniqueMatches(line, /window\.datafast\(\s*['"]([^'"]+)['"]/g, 1),
         ...uniqueMatches(line, /analytics\.track\(\s*['"]([^'"]+)['"]/g, 1),
         ...uniqueMatches(line, /track\(\s*['"]([^'"]+)['"]/g, 1),
         ...uniqueMatches(line, /event_?name['"]?\s*:\s*['"]([^'"]+)['"]/gi, 1),

@@ -45,6 +45,15 @@ export const dashboardWidgetSchema = z.object({
   metric: z.string().optional(),
 });
 
+export const integrationCapabilitiesSchema = z.object({
+  hasDataFast: z.boolean(),
+  hasStripe: z.boolean(),
+  hasSupabase: z.boolean(),
+  hasAdminArea: z.boolean(),
+  hasBackendApiRoutes: z.boolean(),
+  hasFirstPartyAttribution: z.boolean(),
+});
+
 export const auditSchema = z.object({
   version: z.literal("0.1"),
   generatedAt: z.string(),
@@ -62,6 +71,7 @@ export const auditSchema = z.object({
   missingRecommendedEvents: z.array(uiActionSchema),
   suggestedFunnels: z.array(funnelSchema),
   dashboardWidgets: z.array(dashboardWidgetSchema),
+  integrationCapabilities: integrationCapabilitiesSchema.optional(),
 });
 
 export const auditContextSchema = auditSchema.extend({
@@ -86,5 +96,6 @@ export type DetectedEvent = z.infer<typeof detectedEventSchema>;
 export type UIAction = z.infer<typeof uiActionSchema>;
 export type Funnel = z.infer<typeof funnelSchema>;
 export type DashboardWidget = z.infer<typeof dashboardWidgetSchema>;
+export type IntegrationCapabilities = z.infer<typeof integrationCapabilitiesSchema>;
 export type Audit = z.infer<typeof auditSchema>;
 export type AuditContext = z.infer<typeof auditContextSchema>;
